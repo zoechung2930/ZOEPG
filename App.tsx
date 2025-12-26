@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TripData } from './types';
-import { parseItineraryWithGemini } from './services/geminiService';
+import { DEFAULT_TRIP_DATA } from './defaultData';
 import { ItineraryView } from './components/ItineraryView';
 import { ToolsView } from './components/ToolsView';
 import { BudgetView } from './components/BudgetView';
@@ -19,37 +19,23 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      // In a real scenario with API limits, we might want to cache this in localStorage
-      const cached = localStorage.getItem('phu_quoc_data_v1');
-      if (cached) {
-         setData(JSON.parse(cached));
-         setLoading(false);
-         return;
-      }
-
-      const result = await parseItineraryWithGemini();
-      if (result) {
-        setData(result);
-        localStorage.setItem('phu_quoc_data_v1', JSON.stringify(result));
-      } else {
-        setError("無法分析行程資料，請檢查 API Key 設定。");
-      }
-      setLoading(false);
-    };
-
-    fetchData();
+    // Check if there is cached data (e.g. if user edited it in a future version)
+    const cached = localStorage.getItem('phu_quoc_data_v1');
+    if (cached) {
+       setData(JSON.parse(cached));
+    } else {
+       // Use the pre-generated default data for this specific itinerary
+       // This allows the app to work immediately on GitHub Pages without an API Key
+       setData(DEFAULT_TRIP_DATA);
+    }
+    setLoading(false);
   }, []);
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 p-6 text-center">
         <div className="w-16 h-16 border-4 border-stone-200 border-t-stone-800 rounded-full animate-spin mb-6"></div>
-        <h2 className="text-xl font-bold text-stone-800 mb-2">正在為您規劃行程...</h2>
-        <div className="flex items-center justify-center gap-2 text-stone-500 text-sm">
-           <Sparkles className="w-4 h-4 text-indigo-400" />
-           <span>AI 正在分析景點與美食攻略</span>
-        </div>
+        <h2 className="text-xl font-bold text-stone-800 mb-2">正在載入行程...</h2>
       </div>
     );
   }

@@ -97,8 +97,10 @@ const tripSchema: Schema = {
   required: ["itinerary", "flights", "hotels", "budget", "shoppingList", "emergencyContacts"]
 };
 
-export const parseItineraryWithGemini = async (): Promise<TripData | null> => {
-  const apiKey = process.env.API_KEY;
+export const parseItineraryWithGemini = async (providedKey?: string): Promise<TripData | null> => {
+  // Use provided key or try to access process.env safely (avoids crash in browser if process is undefined)
+  const apiKey = providedKey || (typeof process !== 'undefined' && process.env ? process.env.API_KEY : undefined);
+  
   if (!apiKey) {
     console.warn("No API Key found");
     return null;
