@@ -30,11 +30,18 @@ export interface FlightInfo {
   number?: string;
 }
 
+export interface NearbyPlace {
+  name: string;
+  type: 'food' | 'massage' | 'coffee';
+  note?: string; // e.g., "5 min walk", "Famous for Pho"
+}
+
 export interface HotelInfo {
   name: string;
   address?: string;
   dates: string;
   note?: string;
+  nearbyPlaces?: NearbyPlace[];
 }
 
 export interface BudgetItem {

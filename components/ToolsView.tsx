@@ -1,6 +1,6 @@
 import React from 'react';
 import { TripData } from '../types';
-import { Plane, Building, Phone, ArrowRight } from 'lucide-react';
+import { Plane, Building, Phone, ArrowRight, MapPin, Coffee, Utensils, Sparkles } from 'lucide-react';
 
 interface ToolsViewProps {
   data: TripData;
@@ -43,23 +43,51 @@ export const ToolsView: React.FC<ToolsViewProps> = ({ data }) => {
       {/* Hotels */}
       <section>
         <h2 className="text-sm font-bold text-stone-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-          <Building className="w-4 h-4" /> 住宿資訊
+          <Building className="w-4 h-4" /> 住宿與周邊
         </h2>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {data.hotels.map((hotel, i) => (
             <div key={i} className="bg-white p-4 rounded-xl shadow-sm border border-stone-100">
-              <h3 className="font-bold text-stone-800 mb-1">{hotel.name}</h3>
-              <p className="text-xs text-stone-500 mb-2">{hotel.dates}</p>
-              {hotel.address && (
-                  <button 
-                    onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.name + ' ' + (hotel.address || ''))}`, '_blank')}
-                    className="text-xs text-indigo-500 flex items-center gap-1 hover:underline"
-                  >
-                    <MapPinIcon className="w-3 h-3" />
-                    查看地圖
-                  </button>
+              <div className="mb-3">
+                <h3 className="font-bold text-stone-800 mb-1">{hotel.name}</h3>
+                <p className="text-xs text-stone-500 mb-2">{hotel.dates}</p>
+                {hotel.address && (
+                    <button 
+                      onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.name + ' ' + (hotel.address || ''))}`, '_blank')}
+                      className="text-xs text-indigo-500 flex items-center gap-1 hover:underline mb-1"
+                    >
+                      <MapPinIcon className="w-3 h-3" />
+                      查看地圖
+                    </button>
+                )}
+                {hotel.note && <p className="text-xs text-stone-400 italic">{hotel.note}</p>}
+              </div>
+
+              {/* Nearby Recommendations */}
+              {hotel.nearbyPlaces && hotel.nearbyPlaces.length > 0 && (
+                <div className="border-t border-dashed border-stone-200 pt-3 mt-3">
+                    <h4 className="text-xs font-bold text-stone-400 mb-2">周邊推薦</h4>
+                    <div className="grid grid-cols-1 gap-2">
+                        {hotel.nearbyPlaces.map((place, idx) => (
+                            <div 
+                                key={idx} 
+                                onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' Phu Quoc')}`, '_blank')}
+                                className="flex items-center p-2 rounded-lg bg-stone-50 hover:bg-stone-100 active:scale-98 transition-all cursor-pointer"
+                            >
+                                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center mr-3 shadow-sm flex-shrink-0">
+                                    {place.type === 'food' && <Utensils className="w-4 h-4 text-orange-400" />}
+                                    {place.type === 'coffee' && <Coffee className="w-4 h-4 text-brown-500 text-amber-700" />}
+                                    {place.type === 'massage' && <Sparkles className="w-4 h-4 text-purple-400" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-medium text-stone-800 truncate">{place.name}</div>
+                                    {place.note && <div className="text-xs text-stone-500 truncate">{place.note}</div>}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
               )}
-              {hotel.note && <p className="text-xs text-stone-400 mt-2 italic">{hotel.note}</p>}
             </div>
           ))}
         </div>

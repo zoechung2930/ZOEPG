@@ -54,7 +54,19 @@ const tripSchema: Schema = {
           name: { type: Type.STRING },
           address: { type: Type.STRING },
           dates: { type: Type.STRING },
-          note: { type: Type.STRING }
+          note: { type: Type.STRING },
+          nearbyPlaces: {
+            type: Type.ARRAY,
+            description: "List of 3-4 recommended places near the hotel (food, massage, coffee)",
+            items: {
+               type: Type.OBJECT,
+               properties: {
+                 name: { type: Type.STRING },
+                 type: { type: Type.STRING, enum: ['food', 'massage', 'coffee'] },
+                 note: { type: Type.STRING }
+               }
+            }
+          }
         }
       }
     },
@@ -100,7 +112,6 @@ const tripSchema: Schema = {
 export const parseItineraryWithGemini = async (providedKey?: string): Promise<TripData | null> => {
   // Use provided key or try to access process.env safely.
   // In Vite, use import.meta.env.VITE_API_KEY if defined, otherwise fall back.
-  // We keep process.env check for compatibility if defined via vite config.
   
   let apiKey = providedKey;
   
@@ -109,8 +120,13 @@ export const parseItineraryWithGemini = async (providedKey?: string): Promise<Tr
       const meta = import.meta as any;
       if (typeof meta !== 'undefined' && meta.env && meta.env.VITE_API_KEY) {
           apiKey = meta.env.VITE_API_KEY;
-      } else if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-          apiKey = process.env.API_KEY;
+      } else {
+          // Access process via globalThis to avoid TypeScript error TS2580: Cannot find name 'process'
+          // This allows the build to pass even if @types/node is not installed.
+          const globalProcess = (globalThis as any).process;
+          if (globalProcess && globalProcess.env && globalProcess.env.API_KEY) {
+              apiKey = globalProcess.env.API_KEY;
+          }
       }
   }
   
@@ -134,7 +150,8 @@ export const parseItineraryWithGemini = async (providedKey?: string): Promise<Tr
         3. **Weather**: Predict the typical weather for late March in Phu Quoc (Dry season, hot) for the 'weatherInfo'.
         4. **Shopping**: Extract items mentioned to buy (e.g., Mangosteen, Avocado smoothie) into the shopping list.
         5. **Emergency**: Add standard Vietnam emergency numbers (113, 115) to the emergencyContacts list.
-        6. **Language**: The output MUST be in Traditional Chinese (Taiwan).
+        6. **Nearby Recommendations**: For each hotel, analyze its location (e.g., Grand World, Duong Dong) and suggest 3-4 specific real world places nearby for 'nearbyPlaces' field (Food, Massage, Coffee).
+        7. **Language**: The output MUST be in Traditional Chinese (Taiwan).
         
         Input Text:
         ${RAW_ITINERARY_TEXT}

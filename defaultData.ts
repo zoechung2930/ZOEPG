@@ -208,8 +208,30 @@ export const DEFAULT_TRIP_DATA: TripData = {
     { "route": "PQC~TPE", "time": "3/30 08:20 - 13:00", "number": "VJ" }
   ],
   "hotels": [
-    { "name": "201 Freya Retreat", "address": "Grand World Area", "dates": "3/26 - 3/28", "note": "中區 / Grand World 步行 1 min" },
-    { "name": "Philip Bungalow", "address": "Duong Dong", "dates": "3/28 - 3/30", "note": "北區轉中區 / 離夜市較近" }
+    { 
+      "name": "201 Freya Retreat", 
+      "address": "Grand World Area", 
+      "dates": "3/26 - 3/28", 
+      "note": "中區 / Grand World 步行 1 min",
+      "nearbyPlaces": [
+        { "name": "Bún Quậy Kiến Xây", "type": "food", "note": "必吃現做米線 (Grand World店)" },
+        { "name": "Grand World Night Market", "type": "food", "note": "海鮮大排檔與小吃" },
+        { "name": "Trung Nguyen Legend", "type": "coffee", "note": "越南國民咖啡" },
+        { "name": "Grand World Spa", "type": "massage", "note": "步行可達，平價按摩" }
+      ]
+    },
+    { 
+      "name": "Philip Bungalow", 
+      "address": "Duong Dong", 
+      "dates": "3/28 - 3/30", 
+      "note": "北區轉中區 / 離夜市較近",
+      "nearbyPlaces": [
+        { "name": "Phu Quoc Night Market", "type": "food", "note": "陽東夜市，海鮮炒冰必吃" },
+        { "name": "Chuon Chuon Bistro", "type": "coffee", "note": "絕美山頂景色 (需搭車)" },
+        { "name": "Phuc Hung Massage", "type": "massage", "note": "陽東老字號，口碑好" },
+        { "name": "King Kong Mart", "type": "food", "note": "購買伴手禮最方便" }
+      ]
+    }
   ],
   "budget": [
     { "category": "機票", "description": "大姊 (含託運)", "amount": 17823, "currency": "TWD" },
