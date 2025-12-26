@@ -4,12 +4,14 @@ import { DEFAULT_TRIP_DATA } from './defaultData';
 import { ItineraryView } from './components/ItineraryView';
 import { ToolsView } from './components/ToolsView';
 import { BudgetView } from './components/BudgetView';
-import { Map, Briefcase, CreditCard, Sparkles } from 'lucide-react';
+import { ExchangeView } from './components/ExchangeView';
+import { Map, Briefcase, CreditCard, Calculator } from 'lucide-react';
 
 enum Tab {
   ITINERARY = 'itinerary',
   TOOLS = 'tools',
   BUDGET = 'budget',
+  CALCULATOR = 'calculator',
 }
 
 const App: React.FC = () => {
@@ -87,6 +89,7 @@ const App: React.FC = () => {
         {activeTab === Tab.ITINERARY && <ItineraryView days={data.itinerary} />}
         {activeTab === Tab.TOOLS && <ToolsView data={data} />}
         {activeTab === Tab.BUDGET && <BudgetView data={data} />}
+        {activeTab === Tab.CALCULATOR && <ExchangeView />}
       </main>
 
       {/* Bottom Navigation */}
@@ -94,7 +97,7 @@ const App: React.FC = () => {
         <div className="flex justify-around items-center max-w-md mx-auto h-16">
           <button 
             onClick={() => setActiveTab(Tab.ITINERARY)}
-            className={`flex flex-col items-center gap-1 w-1/3 transition-colors ${activeTab === Tab.ITINERARY ? 'text-stone-900' : 'text-stone-400'}`}
+            className={`flex flex-col items-center gap-1 w-1/4 transition-colors ${activeTab === Tab.ITINERARY ? 'text-stone-900' : 'text-stone-400'}`}
           >
             <Map className={`w-6 h-6 ${activeTab === Tab.ITINERARY ? 'fill-stone-100' : ''}`} />
             <span className="text-[10px] font-medium tracking-wide">行程</span>
@@ -102,15 +105,23 @@ const App: React.FC = () => {
           
           <button 
             onClick={() => setActiveTab(Tab.TOOLS)}
-            className={`flex flex-col items-center gap-1 w-1/3 transition-colors ${activeTab === Tab.TOOLS ? 'text-stone-900' : 'text-stone-400'}`}
+            className={`flex flex-col items-center gap-1 w-1/4 transition-colors ${activeTab === Tab.TOOLS ? 'text-stone-900' : 'text-stone-400'}`}
           >
             <Briefcase className={`w-6 h-6 ${activeTab === Tab.TOOLS ? 'fill-stone-100' : ''}`} />
             <span className="text-[10px] font-medium tracking-wide">工具</span>
           </button>
 
           <button 
+            onClick={() => setActiveTab(Tab.CALCULATOR)}
+            className={`flex flex-col items-center gap-1 w-1/4 transition-colors ${activeTab === Tab.CALCULATOR ? 'text-stone-900' : 'text-stone-400'}`}
+          >
+            <Calculator className={`w-6 h-6 ${activeTab === Tab.CALCULATOR ? 'fill-stone-100' : ''}`} />
+            <span className="text-[10px] font-medium tracking-wide">匯率</span>
+          </button>
+
+          <button 
             onClick={() => setActiveTab(Tab.BUDGET)}
-            className={`flex flex-col items-center gap-1 w-1/3 transition-colors ${activeTab === Tab.BUDGET ? 'text-stone-900' : 'text-stone-400'}`}
+            className={`flex flex-col items-center gap-1 w-1/4 transition-colors ${activeTab === Tab.BUDGET ? 'text-stone-900' : 'text-stone-400'}`}
           >
             <CreditCard className={`w-6 h-6 ${activeTab === Tab.BUDGET ? 'fill-stone-100' : ''}`} />
             <span className="text-[10px] font-medium tracking-wide">錢包</span>
