@@ -19,16 +19,37 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if there is cached data (e.g. if user edited it in a future version)
-    const cached = localStorage.getItem('phu_quoc_data_v1');
-    if (cached) {
-       setData(JSON.parse(cached));
-    } else {
-       // Use the pre-generated default data for this specific itinerary
-       // This allows the app to work immediately on GitHub Pages without an API Key
-       setData(DEFAULT_TRIP_DATA);
-    }
-    setLoading(false);
+    const loadData = () => {
+      try {
+        // Check if there is cached data
+        const cached = localStorage.getItem('phu_quoc_data_v1');
+        if (cached) {
+          try {
+             const parsedData = JSON.parse(cached);
+             // Basic validation to check if data is roughly correct
+             if (parsedData && parsedData.itinerary) {
+                setData(parsedData);
+                setLoading(false);
+                return;
+             }
+          } catch (e) {
+             console.warn("Cached data corrupted, clearing and using default.", e);
+             localStorage.removeItem('phu_quoc_data_v1');
+          }
+        }
+        
+        // If no cache or error, use default data
+        setData(DEFAULT_TRIP_DATA);
+        setLoading(false);
+
+      } catch (err) {
+        console.error("Critical error loading data:", err);
+        setError("無法載入行程資料");
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
   if (loading) {
@@ -46,10 +67,13 @@ const App: React.FC = () => {
         <h2 className="text-xl font-bold text-stone-800 mb-2">發生錯誤</h2>
         <p className="text-stone-500">{error || "資料載入失敗"}</p>
         <button 
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
             className="mt-6 px-6 py-2 bg-stone-800 text-white rounded-full text-sm font-medium active:scale-95 transition-transform"
         >
-            重試
+            清除快取並重試
         </button>
       </div>
     );
