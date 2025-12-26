@@ -98,8 +98,21 @@ const tripSchema: Schema = {
 };
 
 export const parseItineraryWithGemini = async (providedKey?: string): Promise<TripData | null> => {
-  // Use provided key or try to access process.env safely (avoids crash in browser if process is undefined)
-  const apiKey = providedKey || (typeof process !== 'undefined' && process.env ? process.env.API_KEY : undefined);
+  // Use provided key or try to access process.env safely.
+  // In Vite, use import.meta.env.VITE_API_KEY if defined, otherwise fall back.
+  // We keep process.env check for compatibility if defined via vite config.
+  
+  let apiKey = providedKey;
+  
+  if (!apiKey) {
+      // Cast import.meta to any to avoid TS error about 'env' property
+      const meta = import.meta as any;
+      if (typeof meta !== 'undefined' && meta.env && meta.env.VITE_API_KEY) {
+          apiKey = meta.env.VITE_API_KEY;
+      } else if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+          apiKey = process.env.API_KEY;
+      }
+  }
   
   if (!apiKey) {
     console.warn("No API Key found");
